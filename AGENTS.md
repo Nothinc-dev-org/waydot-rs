@@ -53,13 +53,15 @@ El proyecto esta implementado en Rust con GTK4 y Libadwaita. La version actual e
 ```
 src/
   main.rs           -- Entry point, setup de AdwApplication
-  app.rs            -- Configuracion de aplicacion y ciclo de activacion
+  app.rs            -- Configuracion de aplicacion, ciclo de activacion y hold de background
+  config.rs         -- Configuracion local persistente del MVP
+  system.rs         -- Bootstrap de metadata de escritorio de usuario para el MVP
   ui/               -- Componentes de interfaz (ventana, grids, tabs, portapapeles)
   search/           -- Motor de busqueda local sobre emojis, kaomojis y simbolos
   clipboard/        -- Historial persistente y monitor de portapapeles de texto
   input/            -- Inyeccion/copia de texto via wtype, xdotool o clipboard fallback
   data/             -- Carga de datasets embebidos
-  dbus/             -- Activacion local y accion de atajo del MVP
+  dbus/             -- Activacion local, background portal y accion de atajo del MVP
 data/               -- Archivos de datos estaticos (JSON)
 docs/               -- Documentacion tecnica
 docs/decisions/     -- Decisiones estructurales y de arquitectura
@@ -77,6 +79,12 @@ Motor de busqueda local con coincidencia simple/fuzzy por subsecuencia. Indexa e
 ### `src/clipboard/`
 Gestion del historial de portapapeles de texto. El monitor usa polling con GTK/GDK cada 500ms, deduplica entradas, conserva anclados, limita entradas no ancladas y persiste en JSON bajo el directorio de datos del usuario.
 
+### `src/config.rs`
+Configuracion persistente local del MVP. Actualmente carga `config.json` bajo el directorio de datos del usuario (`dirs::data_dir()/waydot/`) y define el atajo local de toggle, con `<Control><Shift>v` como valor por defecto.
+
+### `src/system.rs`
+Bootstrap de integracion de escritorio del MVP. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. Cuando se agregue empaquetado, esta responsabilidad debe migrar a recursos instalados por el paquete.
+
 ### `src/input/`
 Insercion del texto/emoji seleccionado en la aplicacion activa. La implementacion actual copia al portapapeles y luego intenta:
 1. `wtype` en Wayland si existe.
@@ -89,4 +97,4 @@ La arquitectura objetivo sigue contemplando `zwp_virtual_keyboard_v1` y `libei/r
 Carga, parseo y gestion de datasets. Emojis via crate `emojis`, kaomojis y simbolos desde archivos JSON embebidos con `include_str!`.
 
 ### `src/dbus/`
-Activacion y atajo del MVP. Actualmente registra una accion `app.toggle` con `<Super>period` y expone un metodo DBus local `Toggle` mediante GIO. El portal `org.freedesktop.portal.GlobalShortcuts` queda como objetivo de integracion futura.
+Activacion, background y atajo del MVP. Actualmente registra una accion `app.toggle` con acelerador configurable (`<Control><Shift>v` por defecto), expone un metodo DBus local `Toggle` mediante GIO, registra la app host con `org.freedesktop.host.portal.Registry` y solicita `org.freedesktop.portal.Background` cuando esta disponible. El portal `org.freedesktop.portal.GlobalShortcuts` queda como objetivo de integracion futura para atajos globales reales.

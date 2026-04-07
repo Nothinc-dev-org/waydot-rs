@@ -1,30 +1,19 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use gtk::glib;
 use gtk::prelude::*;
 
 use crate::clipboard::ClipboardHistory;
 
 pub fn build_clipboard_page(history: &Rc<RefCell<ClipboardHistory>>) -> gtk::ScrolledWindow {
-    let container = gtk::Box::new(gtk::Orientation::Vertical, 0);
-
-    let toolbar = build_toolbar(history);
-    container.append(&toolbar);
-
-    let list_box = gtk::ListBox::builder()
-        .selection_mode(gtk::SelectionMode::None)
-        .css_classes(["boxed-list"])
-        .build();
-
-    populate_list(&list_box, history);
-    container.append(&list_box);
-
     let scrolled = gtk::ScrolledWindow::builder()
         .hscrollbar_policy(gtk::PolicyType::Never)
         .vscrollbar_policy(gtk::PolicyType::Automatic)
         .vexpand(true)
-        .child(&container)
         .build();
+
+    refresh_clipboard_list(&scrolled, history);
 
     scrolled
 }
@@ -35,7 +24,7 @@ pub fn refresh_clipboard_list(
 ) {
     let container = gtk::Box::new(gtk::Orientation::Vertical, 0);
 
-    let toolbar = build_toolbar(history);
+    let toolbar = build_toolbar(scrolled, history);
     container.append(&toolbar);
 
     let list_box = gtk::ListBox::builder()
@@ -43,13 +32,16 @@ pub fn refresh_clipboard_list(
         .css_classes(["boxed-list"])
         .build();
 
-    populate_list(&list_box, history);
+    populate_list(&list_box, scrolled, history);
     container.append(&list_box);
 
     scrolled.set_child(Some(&container));
 }
 
-fn build_toolbar(history: &Rc<RefCell<ClipboardHistory>>) -> gtk::Box {
+fn build_toolbar(
+    scrolled: &gtk::ScrolledWindow,
+    history: &Rc<RefCell<ClipboardHistory>>,
+) -> gtk::Box {
     let clear_button = gtk::Button::builder()
         .label("Limpiar")
         .css_classes(["flat"])
@@ -61,9 +53,14 @@ fn build_toolbar(history: &Rc<RefCell<ClipboardHistory>>) -> gtk::Box {
         .build();
 
     let history_ref = history.clone();
-    clear_button.connect_clicked(move |_| {
-        history_ref.borrow_mut().clear_unpinned();
-    });
+    clear_button.connect_clicked(glib::clone!(
+        #[weak]
+        scrolled,
+        move |_| {
+            history_ref.borrow_mut().clear_unpinned();
+            refresh_clipboard_list(&scrolled, &history_ref);
+        }
+    ));
 
     let toolbar = gtk::Box::builder()
         .orientation(gtk::Orientation::Horizontal)
@@ -77,7 +74,11 @@ fn build_toolbar(history: &Rc<RefCell<ClipboardHistory>>) -> gtk::Box {
     toolbar
 }
 
-fn populate_list(list_box: &gtk::ListBox, history: &Rc<RefCell<ClipboardHistory>>) {
+fn populate_list(
+    list_box: &gtk::ListBox,
+    scrolled: &gtk::ScrolledWindow,
+    history: &Rc<RefCell<ClipboardHistory>>,
+) {
     let entries = history.borrow();
     if entries.entries().is_empty() {
         let label = gtk::Label::builder()
@@ -91,7 +92,7 @@ fn populate_list(list_box: &gtk::ListBox, history: &Rc<RefCell<ClipboardHistory>
     }
 
     for (i, entry) in entries.entries().iter().enumerate() {
-        let row = build_entry_row(i, entry, history);
+        let row = build_entry_row(i, entry, scrolled, history);
         list_box.append(&row);
     }
 }
@@ -99,6 +100,7 @@ fn populate_list(list_box: &gtk::ListBox, history: &Rc<RefCell<ClipboardHistory>
 fn build_entry_row(
     index: usize,
     entry: &crate::clipboard::ClipboardEntry,
+    scrolled: &gtk::ScrolledWindow,
     history: &Rc<RefCell<ClipboardHistory>>,
 ) -> gtk::Box {
     let preview = truncate(&entry.content, 80);
@@ -152,17 +154,24 @@ fn build_entry_row(
     });
 
     let history_ref = history.clone();
-    pin_button.connect_clicked(move |btn| {
-        history_ref.borrow_mut().toggle_pin(index);
-        let pinned = history_ref.borrow().entries()[index].pinned;
-        btn.set_icon_name(pin_icon);
-        btn.set_tooltip_text(Some(if pinned { "Desanclar" } else { "Anclar" }));
-    });
+    pin_button.connect_clicked(glib::clone!(
+        #[weak]
+        scrolled,
+        move |_| {
+            history_ref.borrow_mut().toggle_pin(index);
+            refresh_clipboard_list(&scrolled, &history_ref);
+        }
+    ));
 
     let history_ref = history.clone();
-    delete_button.connect_clicked(move |_| {
-        history_ref.borrow_mut().remove(index);
-    });
+    delete_button.connect_clicked(glib::clone!(
+        #[weak]
+        scrolled,
+        move |_| {
+            history_ref.borrow_mut().remove(index);
+            refresh_clipboard_list(&scrolled, &history_ref);
+        }
+    ));
 
     row
 }

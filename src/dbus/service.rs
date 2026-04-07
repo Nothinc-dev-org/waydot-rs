@@ -2,6 +2,8 @@ use gtk::gio;
 use gtk::prelude::*;
 use libadwaita as adw;
 
+use super::shortcuts;
+
 const OBJECT_PATH: &str = "/com/nothinc/Waydot";
 
 pub fn activate_or_register(app: &adw::Application) {
@@ -21,7 +23,7 @@ pub fn activate_or_register(app: &adw::Application) {
             move |_conn, _sender, _path, _iface, method, _params, invocation| {
                 if method == "Toggle" {
                     if let Some(app) = app_weak.upgrade() {
-                        app.activate();
+                        shortcuts::toggle_window(&app);
                     }
                 }
                 invocation.return_value(None);

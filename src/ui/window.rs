@@ -64,6 +64,8 @@ impl Window {
         let window = adw::Window::builder()
             .application(app)
             .title("Waydot")
+            .icon_name(crate::app::APPLICATION_ID)
+            .hide_on_close(true)
             .default_width(380)
             .default_height(420)
             .content(&content)
@@ -122,7 +124,26 @@ impl Window {
             }
         ));
 
-        let monitor = ClipboardMonitor::new(history);
+        let history_for_monitor = history.clone();
+        let monitor = ClipboardMonitor::new(
+            history,
+            glib::clone!(
+                #[weak]
+                view_stack,
+                move || {
+                    if view_stack.visible_child_name().as_deref() == Some("clipboard") {
+                        if let Some(child) = view_stack.child_by_name("clipboard") {
+                            if let Some(scrolled) = child.downcast_ref::<gtk::ScrolledWindow>() {
+                                clipboard_panel::refresh_clipboard_list(
+                                    scrolled,
+                                    &history_for_monitor,
+                                );
+                            }
+                        }
+                    }
+                }
+            ),
+        );
         monitor.start();
 
         Self { window }

@@ -18,7 +18,7 @@ La arquitectura objetivo prioriza Wayland, seguridad de entrada y baja latencia.
 | Busqueda | Coincidencia por substring y subsecuencia | Indices persistentes, ranking, respuesta sub-10ms medible |
 | Portapapeles | Texto plano via GDK polling cada 500ms, persistencia JSON | MIME types multiples, imagenes, HTML, SQLite/binario, daemon separado |
 | Inyeccion | Copia al portapapeles + `wtype` o `xdotool` si existen | `zwp_virtual_keyboard_v1`, `libei/reis`, portalizacion segura |
-| Activacion | Accion local `<Super>period` y metodo DBus `Toggle` con GIO | XDG GlobalShortcuts Portal y servicio DBus robusto |
+| Activacion | Accion local configurable (`<Control><Shift>v` por defecto), metodo DBus `Toggle` con GIO, ejecucion en background con `Application::hold`, identidad de escritorio de usuario y registro host en portal | XDG GlobalShortcuts Portal, empaquetado formal y servicio DBus robusto |
 
 ## Arquitectura de Alto Nivel
 
@@ -51,9 +51,11 @@ La arquitectura objetivo prioriza Wayland, seguridad de entrada y baja latencia.
 
 ## Componentes Principales
 
-### 1. Aplicacion (`src/main.rs`, `src/app.rs`)
+### 1. Aplicacion (`src/main.rs`, `src/app.rs`, `src/config.rs`, `src/system.rs`)
 
-`main.rs` inicializa la aplicacion Libadwaita. `app.rs` construye `adw::Application` con application id `com.nothinc.waydot`, registra la accion de atajo durante `startup` y crea o presenta la ventana durante `activate`.
+`main.rs` inicializa la aplicacion Libadwaita. `app.rs` construye `adw::Application` con application id `com.nothinc.waydot`, asegura metadata de escritorio de usuario durante el MVP, registra la accion de atajo durante `startup`, mantiene vivo el proceso para background y crea o presenta la ventana durante `activate`.
+
+`config.rs` carga `config.json` bajo `dirs::data_dir()/waydot/` y define `<Control><Shift>v` como acelerador local por defecto. `system.rs` genera una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras el proyecto no tenga empaquetado formal.
 
 ### 2. GUI (`src/ui/`)
 
@@ -85,6 +87,7 @@ El historial actual soporta texto plano:
 
 - `ClipboardMonitor` consulta `gdk::Display::default().clipboard().read_text_async()` cada 500ms.
 - `ClipboardHistory` ignora entradas vacias, deduplica contenido existente, mantiene timestamps, soporta anclado y persiste automaticamente.
+- El panel de clipboard se refresca cuando el monitor agrega una entrada nueva y cuando las acciones de limpiar, anclar o eliminar cambian el historial.
 - El archivo se guarda como `clipboard_history.json` dentro de `dirs::data_dir()/waydot/`.
 - `MAX_ENTRIES` limita 100 entradas no ancladas; las entradas ancladas se preservan sobre ese limite.
 
@@ -104,10 +107,11 @@ Este diseno evita depender desde el inicio de protocolos privilegiados de Waylan
 
 ### 7. DBus y Atajo (`src/dbus/`)
 
-El MVP tiene dos piezas:
+El MVP tiene tres piezas:
 
-- `shortcuts.rs`: registra una accion `app.toggle` con acelerador `<Super>period`.
+- `shortcuts.rs`: registra una accion `app.toggle` con acelerador configurable (`<Control><Shift>v` por defecto).
 - `service.rs`: registra un objeto DBus en `/com/nothinc/Waydot` con interfaz `com.nothinc.Waydot` y metodo `Toggle`.
+- `background.rs`: registra la app host en `org.freedesktop.host.portal.Registry`, solicita el portal `org.freedesktop.portal.Background` y publica un estado de background cuando esta disponible y permitido por el entorno.
 
 La integracion objetivo con `org.freedesktop.portal.GlobalShortcuts` todavia no esta implementada. Cualquier cambio en activacion global debe documentarse como decision estructural en `docs/decisions/`.
 
@@ -130,7 +134,8 @@ ClipboardMonitor tick cada 500ms
   -> Lee texto del portapapeles via GDK
   -> Si cambio y no esta vacio, ClipboardHistory::push
   -> Deduplica, limita no anclados y guarda JSON
-  -> Panel refresca al entrar en la pestana Clipboard
+  -> Notifica a la UI
+  -> Panel refresca si la pestana Clipboard esta visible
 ```
 
 ## Decisiones Tecnicas

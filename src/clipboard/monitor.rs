@@ -11,19 +11,22 @@ const POLL_INTERVAL_MS: u32 = 500;
 pub struct ClipboardMonitor {
     history: Rc<RefCell<ClipboardHistory>>,
     last_content: Rc<RefCell<String>>,
+    on_change: Rc<dyn Fn()>,
 }
 
 impl ClipboardMonitor {
-    pub fn new(history: Rc<RefCell<ClipboardHistory>>) -> Self {
+    pub fn new(history: Rc<RefCell<ClipboardHistory>>, on_change: impl Fn() + 'static) -> Self {
         Self {
             history,
             last_content: Rc::new(RefCell::new(String::new())),
+            on_change: Rc::new(on_change),
         }
     }
 
     pub fn start(&self) {
         let history = self.history.clone();
         let last_content = self.last_content.clone();
+        let on_change = self.on_change.clone();
 
         glib::timeout_add_local(
             std::time::Duration::from_millis(POLL_INTERVAL_MS as u64),
@@ -34,6 +37,7 @@ impl ClipboardMonitor {
                 let clipboard = display.clipboard();
                 let history = history.clone();
                 let last_content = last_content.clone();
+                let on_change = on_change.clone();
 
                 clipboard.read_text_async(gtk::gio::Cancellable::NONE, move |result| {
                     if let Ok(Some(text)) = result {
@@ -42,6 +46,7 @@ impl ClipboardMonitor {
                         if !text.is_empty() && *last != text {
                             *last = text.clone();
                             history.borrow_mut().push(text);
+                            on_change();
                         }
                     }
                 });
