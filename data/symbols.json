@@ -1,0 +1,86 @@
+{
+  "categories": [
+    {
+      "name": "Monedas",
+      "entries": [
+        {"char": "$", "name": "dolar", "keywords": ["dollar", "money", "dinero", "peso"]},
+        {"char": "€", "name": "euro", "keywords": ["europa", "europe", "money", "dinero"]},
+        {"char": "£", "name": "libra", "keywords": ["pound", "sterling", "money", "dinero"]},
+        {"char": "¥", "name": "yen", "keywords": ["japan", "japon", "yuan", "money", "dinero"]},
+        {"char": "₩", "name": "won", "keywords": ["korea", "corea", "money", "dinero"]},
+        {"char": "₹", "name": "rupia", "keywords": ["rupee", "india", "money", "dinero"]},
+        {"char": "₿", "name": "bitcoin", "keywords": ["crypto", "cripto", "money", "dinero"]},
+        {"char": "₽", "name": "rublo", "keywords": ["ruble", "rusia", "russia", "money", "dinero"]},
+        {"char": "¢", "name": "centavo", "keywords": ["cent", "money", "dinero"]},
+        {"char": "₫", "name": "dong", "keywords": ["vietnam", "money", "dinero"]}
+      ]
+    },
+    {
+      "name": "Flechas",
+      "entries": [
+        {"char": "→", "name": "flecha derecha", "keywords": ["right", "arrow", "derecha"]},
+        {"char": "←", "name": "flecha izquierda", "keywords": ["left", "arrow", "izquierda"]},
+        {"char": "↑", "name": "flecha arriba", "keywords": ["up", "arrow", "arriba"]},
+        {"char": "↓", "name": "flecha abajo", "keywords": ["down", "arrow", "abajo"]},
+        {"char": "↔", "name": "flecha bidireccional", "keywords": ["both", "arrow", "horizontal"]},
+        {"char": "↕", "name": "flecha vertical bidireccional", "keywords": ["both", "arrow", "vertical"]},
+        {"char": "⇒", "name": "flecha doble derecha", "keywords": ["implies", "double", "arrow"]},
+        {"char": "⇐", "name": "flecha doble izquierda", "keywords": ["double", "arrow", "left"]},
+        {"char": "⇑", "name": "flecha doble arriba", "keywords": ["double", "arrow", "up"]},
+        {"char": "⇓", "name": "flecha doble abajo", "keywords": ["double", "arrow", "down"]}
+      ]
+    },
+    {
+      "name": "Matematicas",
+      "entries": [
+        {"char": "±", "name": "mas menos", "keywords": ["plus", "minus", "plusminus"]},
+        {"char": "×", "name": "multiplicacion", "keywords": ["times", "multiply", "por"]},
+        {"char": "÷", "name": "division", "keywords": ["divide", "entre"]},
+        {"char": "≠", "name": "no igual", "keywords": ["not equal", "diferente", "distinto"]},
+        {"char": "≈", "name": "aproximadamente", "keywords": ["approximately", "approx", "casi"]},
+        {"char": "≤", "name": "menor o igual", "keywords": ["less", "equal", "menor"]},
+        {"char": "≥", "name": "mayor o igual", "keywords": ["greater", "equal", "mayor"]},
+        {"char": "∞", "name": "infinito", "keywords": ["infinity", "infinite"]},
+        {"char": "π", "name": "pi", "keywords": ["pi", "circle", "circulo"]},
+        {"char": "√", "name": "raiz cuadrada", "keywords": ["square", "root", "raiz"]},
+        {"char": "∑", "name": "sumatoria", "keywords": ["sum", "sigma", "suma"]},
+        {"char": "∫", "name": "integral", "keywords": ["integral", "calculus", "calculo"]},
+        {"char": "∂", "name": "derivada parcial", "keywords": ["partial", "derivative", "derivada"]},
+        {"char": "Δ", "name": "delta", "keywords": ["delta", "change", "cambio"]},
+        {"char": "∅", "name": "conjunto vacio", "keywords": ["empty", "set", "vacio", "null"]}
+      ]
+    },
+    {
+      "name": "Puntuacion",
+      "entries": [
+        {"char": "—", "name": "raya", "keywords": ["em dash", "guion largo", "dash"]},
+        {"char": "–", "name": "semirraya", "keywords": ["en dash", "guion medio"]},
+        {"char": "…", "name": "puntos suspensivos", "keywords": ["ellipsis", "dots", "puntos"]},
+        {"char": "·", "name": "punto medio", "keywords": ["middle dot", "punto", "interpunct"]},
+        {"char": "¿", "name": "interrogacion apertura", "keywords": ["question", "pregunta", "apertura"]},
+        {"char": "¡", "name": "exclamacion apertura", "keywords": ["exclamation", "admiracion", "apertura"]},
+        {"char": "«", "name": "comillas angulares izquierda", "keywords": ["guillemet", "comillas", "left"]},
+        {"char": "»", "name": "comillas angulares derecha", "keywords": ["guillemet", "comillas", "right"]},
+        {"char": "†", "name": "daga", "keywords": ["dagger", "cruz", "nota"]},
+        {"char": "§", "name": "seccion", "keywords": ["section", "parrafo"]}
+      ]
+    },
+    {
+      "name": "Miscelanea",
+      "entries": [
+        {"char": "©", "name": "copyright", "keywords": ["copyright", "derechos", "autor"]},
+        {"char": "®", "name": "marca registrada", "keywords": ["registered", "marca", "trademark"]},
+        {"char": "™", "name": "trademark", "keywords": ["trademark", "marca", "comercial"]},
+        {"char": "°", "name": "grado", "keywords": ["degree", "grado", "temperatura"]},
+        {"char": "µ", "name": "micro", "keywords": ["micro", "mu", "greek"]},
+        {"char": "¶", "name": "pilcrow", "keywords": ["paragraph", "parrafo", "pilcrow"]},
+        {"char": "№", "name": "numero", "keywords": ["number", "numero", "signo"]},
+        {"char": "‰", "name": "por mil", "keywords": ["per mille", "permil", "mil"]},
+        {"char": "♠", "name": "pica", "keywords": ["spade", "poker", "carta"]},
+        {"char": "♣", "name": "trebol", "keywords": ["club", "poker", "carta"]},
+        {"char": "♥", "name": "corazon", "keywords": ["heart", "poker", "carta", "amor"]},
+        {"char": "♦", "name": "diamante", "keywords": ["diamond", "poker", "carta"]}
+      ]
+    }
+  ]
+}

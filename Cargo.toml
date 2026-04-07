@@ -1,0 +1,16 @@
+[package]
+name = "waydot"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+gtk = { version = "0.9", package = "gtk4", features = ["v4_16"] }
+libadwaita = { version = "0.7", features = ["v1_6"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+emojis = "0.6"
+dirs = "6"
+zbus = "5"
+chrono = { version = "0.4", features = ["serde"] }
