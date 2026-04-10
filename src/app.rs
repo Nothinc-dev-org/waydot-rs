@@ -26,7 +26,8 @@ pub fn build_app() -> adw::Application {
             eprintln!("No se pudo registrar la metadata de escritorio de Waydot: {err}");
         }
         keep_running_in_background(app);
-        dbus::register_global_shortcut(app, &config.toggle_shortcut);
+        dbus::register_shortcuts(app, &config.clipboard_shortcut, &config.emoji_shortcut);
+        crate::tray::spawn();
     });
 
     app.connect_activate(|app| {

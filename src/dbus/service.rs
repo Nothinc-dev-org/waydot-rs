@@ -21,9 +21,12 @@ pub fn activate_or_register(app: &adw::Application) {
         .register_object(OBJECT_PATH, &interface)
         .method_call(
             move |_conn, _sender, _path, _iface, method, _params, invocation| {
-                if method == "Toggle" {
-                    if let Some(app) = app_weak.upgrade() {
-                        shortcuts::toggle_window(&app);
+                if let Some(app) = app_weak.upgrade() {
+                    match method {
+                        "Toggle" => shortcuts::toggle_window(&app),
+                        "ShowClipboard" => shortcuts::show_tab(&app, "clipboard"),
+                        "ShowEmojis" => shortcuts::show_tab(&app, "emojis"),
+                        _ => {}
                     }
                 }
                 invocation.return_value(None);
@@ -37,6 +40,8 @@ fn build_interface_info() -> gio::DBusNodeInfo {
         <node>
             <interface name="com.nothinc.Waydot">
                 <method name="Toggle"/>
+                <method name="ShowClipboard"/>
+                <method name="ShowEmojis"/>
             </interface>
         </node>
     "#;

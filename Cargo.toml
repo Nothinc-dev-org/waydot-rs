@@ -2,6 +2,7 @@
 name = "waydot"
 version = "0.1.0"
 edition = "2024"
+license = "GPL-3.0-only"
 
 [dependencies]
 gtk = { version = "0.9", package = "gtk4", features = ["v4_16"] }
@@ -14,3 +15,4 @@ emojis = "0.6"
 dirs = "6"
 zbus = "5"
 chrono = { version = "0.4", features = ["serde"] }
+ksni = "0.2"

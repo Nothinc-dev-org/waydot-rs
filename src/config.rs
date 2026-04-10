@@ -4,12 +4,15 @@ use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
 
 const CONFIG_FILE: &str = "config.json";
-pub const DEFAULT_TOGGLE_SHORTCUT: &str = "<Control><Shift>v";
+pub const DEFAULT_CLIPBOARD_SHORTCUT: &str = "<Control><Super>v";
+pub const DEFAULT_EMOJI_SHORTCUT: &str = "<Control><Shift>period";
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct AppConfig {
-    #[serde(default = "default_toggle_shortcut")]
-    pub toggle_shortcut: String,
+    #[serde(default = "default_clipboard_shortcut")]
+    pub clipboard_shortcut: String,
+    #[serde(default = "default_emoji_shortcut")]
+    pub emoji_shortcut: String,
 }
 
 impl AppConfig {
@@ -39,13 +42,18 @@ impl AppConfig {
 impl Default for AppConfig {
     fn default() -> Self {
         Self {
-            toggle_shortcut: default_toggle_shortcut(),
+            clipboard_shortcut: default_clipboard_shortcut(),
+            emoji_shortcut: default_emoji_shortcut(),
         }
     }
 }
 
-fn default_toggle_shortcut() -> String {
-    DEFAULT_TOGGLE_SHORTCUT.to_string()
+fn default_clipboard_shortcut() -> String {
+    DEFAULT_CLIPBOARD_SHORTCUT.to_string()
+}
+
+fn default_emoji_shortcut() -> String {
+    DEFAULT_EMOJI_SHORTCUT.to_string()
 }
 
 fn config_path() -> PathBuf {

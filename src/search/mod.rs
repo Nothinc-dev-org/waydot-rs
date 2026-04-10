@@ -1,5 +1,6 @@
 use crate::data::{EmojiEntry, Kaomoji, Symbol, load_emojis, load_kaomojis, load_symbols};
 
+#[derive(Clone)]
 pub enum SearchResult {
     Emoji {
         glyph: String,
@@ -30,6 +31,13 @@ impl SearchResult {
             SearchResult::Emoji { name, .. } => name.clone(),
             SearchResult::Kaomoji { category, .. } => category.clone(),
             SearchResult::Symbol { name, category, .. } => format!("{category} — {name}"),
+        }
+    }
+
+    pub fn emoji_glyph(&self) -> Option<&str> {
+        match self {
+            SearchResult::Emoji { glyph, .. } => Some(glyph),
+            _ => None,
         }
     }
 }
