@@ -177,10 +177,40 @@ fn build_entry_row(
 }
 
 fn truncate(s: &str, max: usize) -> String {
-    let single_line: String = s.chars().map(|c| if c == '\n' { ' ' } else { c }).collect();
-    if single_line.len() <= max {
+    let single_line: String = s
+        .chars()
+        .map(|c| if matches!(c, '\n' | '\r') { ' ' } else { c })
+        .collect();
+
+    if single_line.chars().count() <= max {
         single_line
     } else {
-        format!("{}...", &single_line[..max])
+        let preview: String = single_line.chars().take(max).collect();
+        format!("{preview}...")
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::truncate;
+
+    #[test]
+    fn truncate_keeps_short_strings_untouched() {
+        assert_eq!(truncate("hola", 80), "hola");
+    }
+
+    #[test]
+    fn truncate_replaces_line_breaks_before_limiting() {
+        assert_eq!(truncate("hola\nmundo", 80), "hola mundo");
+        assert_eq!(truncate("hola\r\nmundo", 80), "hola  mundo");
+    }
+
+    #[test]
+    fn truncate_handles_multibyte_unicode_safely() {
+        let input = "┌──[alcss@asus-fedora]—(~/Documentos/Trabajo/reporte-dz/reportes_api) └─$ git status";
+        let truncated = truncate(input, 80);
+
+        assert!(truncated.ends_with("..."));
+        assert_eq!(truncated.chars().count(), 83);
     }
 }
