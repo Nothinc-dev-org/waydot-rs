@@ -4,7 +4,7 @@
 
 Waydot es un panel de entrada expresiva para Linux que replica la experiencia de Win+. de Windows 11: selector de emojis, kaomojis, simbolos especiales e historial del portapapeles. El objetivo de producto tambien contempla GIFs via Tenor API, pero esa integracion todavia pertenece al roadmap.
 
-El proyecto esta implementado en Rust con GTK4 y Libadwaita. La version actual es un MVP local: UI GTK/Adw, busqueda sobre datasets locales, monitoreo de portapapeles de texto y fallback de insercion mediante portapapeles + herramientas externas cuando estan disponibles.
+El proyecto esta implementado en Rust con GTK4 y Libadwaita. La version actual ofrece UI GTK/Adw, busqueda sobre datasets locales, monitoreo de portapapeles de texto y publicacion de texto al portapapeles. La insercion nativa queda preservada como codigo desconectado en `src/input/`.
 
 ## Stack Tecnologico
 
@@ -13,7 +13,7 @@ El proyecto esta implementado en Rust con GTK4 y Libadwaita. La version actual e
 - **Async runtime**: Tokio
 - **HTTP**: Reqwest
 - **Serialization**: Serde + serde_json
-- **DBus / GIO**: zbus como dependencia y GIO DBus para el MVP
+- **DBus / GIO**: zbus como dependencia y GIO DBus para activacion e integracion local
 - **Datos locales**: crate `emojis` + JSON embebido en `data/`
 
 ## Convenciones Globales
@@ -54,14 +54,14 @@ El proyecto esta implementado en Rust con GTK4 y Libadwaita. La version actual e
 src/
   main.rs           -- Entry point, setup de AdwApplication
   app.rs            -- Configuracion de aplicacion, ciclo de activacion y hold de background
-  config.rs         -- Configuracion local persistente del MVP
+  config.rs         -- Configuracion local persistente
   emoji_history.rs  -- Historial persistente de emojis recientes
-  system.rs         -- Bootstrap de metadata de escritorio de usuario para el MVP
+  system.rs         -- Bootstrap de metadata de escritorio de usuario
   tray.rs           -- Icono de bandeja del sistema (ksni/StatusNotifierItem)
   ui/               -- Componentes de interfaz (ventana, grids, tabs, portapapeles)
   search/           -- Motor de busqueda local sobre emojis, kaomojis y simbolos
   clipboard/        -- Historial persistente y monitor de portapapeles de texto
-  input/            -- Inyeccion/copia de texto via wtype, xdotool o clipboard fallback
+  input/            -- Publicacion de texto al portapapeles y modulos de insercion nativa desconectados
   data/             -- Carga de datasets embebidos
   dbus/             -- Activacion, background portal y atajos por pestana
 data/               -- Archivos de datos estaticos (JSON)
@@ -88,21 +88,16 @@ Gestion del historial de portapapeles de texto. El monitor usa polling con GTK/G
 Icono de bandeja del sistema usando `ksni` (protocolo StatusNotifierItem). Ejecuta el servicio en un thread separado. El menu ofrece abrir la ventana (via `org.gtk.Actions.Activate`) y salir de la aplicacion.
 
 ### `src/config.rs`
-Configuracion persistente local del MVP. Actualmente carga `config.json` bajo el directorio de datos del usuario (`dirs::data_dir()/waydot/`) y define dos atajos locales: `clipboard_shortcut` (`<Control><Super>v` por defecto) y `emoji_shortcut` (`<Control><Shift>period` por defecto).
+Configuracion persistente local. Actualmente carga `config.json` bajo el directorio de datos del usuario (`dirs::data_dir()/waydot/`) y define dos atajos locales: `clipboard_shortcut` (`<Control><Super>v` por defecto) y `emoji_shortcut` (`<Control><Shift>period` por defecto).
 
 ### `src/system.rs`
-Bootstrap de integracion de escritorio del MVP. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. Cuando se agregue empaquetado, esta responsabilidad debe migrar a recursos instalados por el paquete.
+Bootstrap de integracion de escritorio. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. Cuando se agregue empaquetado, esta responsabilidad debe migrar a recursos instalados por el paquete.
 
 ### `src/input/`
-Insercion del texto/emoji seleccionado en la aplicacion activa. La implementacion actual copia al portapapeles y luego intenta:
-1. `wtype` en Wayland si existe.
-2. `xdotool` si existe.
-3. Clipboard fallback sin pegado automatico.
-
-La arquitectura objetivo sigue contemplando `zwp_virtual_keyboard_v1` y `libei/reis`, pero no estan implementados.
+Publicacion del texto/emoji seleccionado al portapapeles activo. El directorio conserva una implementacion modular de insercion nativa para Wayland y X11, pero no forma parte del runtime actual.
 
 ### `src/data/`
 Carga, parseo y gestion de datasets. Emojis via crate `emojis`, kaomojis y simbolos desde archivos JSON embebidos con `include_str!`.
 
 ### `src/dbus/`
-Activacion, background y atajos del MVP. Registra dos acciones (`app.show-clipboard` y `app.show-emojis`) con aceleradores configurables. Expone metodos DBus `Toggle`, `ShowClipboard` y `ShowEmojis` mediante GIO. La activacion externa usa `org.gtk.Actions.Activate` (interfaz estandar de GApplication) para obtener tokens de activacion de Wayland. Registra la app host con `org.freedesktop.host.portal.Registry` y solicita `org.freedesktop.portal.Background`. El portal `org.freedesktop.portal.GlobalShortcuts` queda como objetivo de integracion futura.
+Activacion, background y atajos. Registra dos acciones (`app.show-clipboard` y `app.show-emojis`) con aceleradores configurables. Expone metodos DBus `Toggle`, `ShowClipboard` y `ShowEmojis` mediante GIO. La activacion externa usa `org.gtk.Actions.Activate` (interfaz estandar de GApplication) para obtener tokens de activacion de Wayland. Registra la app host con `org.freedesktop.host.portal.Registry` y solicita `org.freedesktop.portal.Background`. El portal `org.freedesktop.portal.GlobalShortcuts` queda como objetivo de integracion futura.

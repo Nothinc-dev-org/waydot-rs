@@ -3,9 +3,11 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Once;
 
+use gtk::gio;
+use gtk::glib;
 use gtk::prelude::*;
-use gtk::{gio, glib};
 
+use crate::debug;
 use crate::emoji_history::RecentEmojiHistory;
 use crate::input;
 use crate::search::{SearchEngine, SearchResult};
@@ -190,11 +192,11 @@ pub fn build_emoji_results(
 
     for result in results {
         let text = result.display_text();
-        let tooltip = &result.label();
+        let tooltip = result.label();
 
         let button = gtk::Button::builder()
             .label(text)
-            .tooltip_text(tooltip)
+            .tooltip_text(&tooltip)
             .width_request(EMOJI_BUTTON_SIZE)
             .height_request(EMOJI_BUTTON_SIZE)
             .css_classes(["flat", "emoji-button"])
@@ -204,7 +206,11 @@ pub fn build_emoji_results(
         let result = result.clone();
         let on_select = on_select.clone();
         button.connect_clicked(move |_| {
-            input::inject_text(&display);
+            debug::input_log(
+                "ui",
+                format!("click en emoji button; text={display:?}; tooltip={tooltip:?}"),
+            );
+            input::copy_text(&display);
             if let Some(on_select) = &on_select {
                 on_select(result.clone());
             }
@@ -275,7 +281,9 @@ fn build_emoji_grid_view(
             };
             let result = item.borrow::<SearchResult>().clone();
 
-            input::inject_text(result.display_text());
+            let display = result.display_text().to_string();
+            debug::input_log("ui", format!("activate en emoji grid; text={display:?}"));
+            input::copy_text(&display);
             on_select(result);
         });
     }
@@ -302,7 +310,8 @@ pub fn build_label_results(results: &[SearchResult]) -> gtk::FlowBox {
 
         let display = text.to_string();
         button.connect_clicked(move |_| {
-            input::inject_text(&display);
+            debug::input_log("ui", format!("click en label result; text={display:?}"));
+            input::copy_text(&display);
         });
 
         flow.append(&button);

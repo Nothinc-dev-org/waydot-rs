@@ -13,10 +13,10 @@ Entry point minimo. Debe limitarse a construir la aplicacion y ejecutar `app.run
 Configura `adw::Application`, el ciclo de `startup`/`activate`, el `application_id`, el hold de background y la presentacion/reutilizacion de la ventana principal. No debe contener logica de UI ni reglas del historial del portapapeles.
 
 ### `config.rs`
-Carga configuracion persistente local del MVP desde `dirs::data_dir()/waydot/config.json`. Actualmente define el atajo local de toggle, con `<Control><Shift>v` como default.
+Carga configuracion persistente local desde `dirs::data_dir()/waydot/config.json`. Actualmente define el atajo local de toggle, con `<Control><Shift>v` como default.
 
 ### `system.rs`
-Bootstrap de integracion de escritorio del MVP. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. No debe crecer hacia instaladores completos; cuando exista empaquetado, mover esa responsabilidad al paquete.
+Bootstrap de integracion de escritorio. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. No debe crecer hacia instaladores completos; cuando exista empaquetado, mover esa responsabilidad al paquete.
 
 ### `ui/`
 Componentes GTK4/Libadwaita. Deben enfocarse en presentacion, composicion de widgets y delegacion de eventos. No colocar aqui persistencia, carga de datasets, seleccion de backends de inyeccion ni reglas de negocio del historial.
@@ -31,10 +31,10 @@ Carga de datasets estaticos embebidos. Los errores de parseo pueden ser tratados
 Historial y monitor de portapapeles. Mantener aqui deduplicacion, limites, pinning, persistencia y polling GDK. La notificacion a UI debe ser por callbacks/señales explícitas, no por acoplamiento directo con widgets.
 
 ### `input/`
-Insercion/copia del texto seleccionado. Encapsula la seleccion de backends (`wtype`, `xdotool`, fallback de portapapeles). No mezclar con UI ni busqueda.
+Publicacion/copia del texto seleccionado. Mantiene el flujo activo de portapapeles y conserva modulos de insercion nativa no cableados al runtime. No mezclar con UI ni busqueda.
 
 ### `dbus/`
-Activacion local, metodo `Toggle`, atajo local configurable y portales DBus del MVP. `GlobalShortcuts` sigue siendo roadmap; no documentar un atajo global real hasta implementar el portal correspondiente.
+Activacion local, metodo `Toggle`, atajo local configurable y portales DBus. `GlobalShortcuts` sigue siendo roadmap; no documentar un atajo global real hasta implementar el portal correspondiente.
 
 ## Dependencias Permitidas
 

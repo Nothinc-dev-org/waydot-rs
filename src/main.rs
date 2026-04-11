@@ -3,6 +3,7 @@ mod clipboard;
 mod config;
 mod data;
 mod dbus;
+mod debug;
 mod emoji_history;
 mod input;
 mod search;
