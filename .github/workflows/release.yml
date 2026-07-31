@@ -23,6 +23,7 @@ jobs:
             gtk4-devel \
             libadwaita-devel \
             wayland-devel \
+            openssl-devel \
             rpm-build \
             rpmdevtools
 

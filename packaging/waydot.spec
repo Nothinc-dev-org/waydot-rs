@@ -9,6 +9,7 @@ Source0: waydot-%{version}.tar.gz
 BuildRequires: cargo
 BuildRequires: gtk4-devel
 BuildRequires: libadwaita-devel
+BuildRequires: openssl-devel
 BuildRequires: rust
 BuildRequires: wayland-devel
 
