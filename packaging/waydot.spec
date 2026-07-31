@@ -7,11 +7,13 @@ URL: https://github.com/Nothinc-dev-org/waydot-rs
 Source0: waydot-%{version}.tar.gz
 
 BuildRequires: cargo
+BuildRequires: dbus-devel
 BuildRequires: gtk4-devel
 BuildRequires: libadwaita-devel
+BuildRequires: libxkbcommon-devel
 BuildRequires: openssl-devel
+BuildRequires: pkgconf-pkg-config
 BuildRequires: rust
-BuildRequires: wayland-devel
 
 Requires: gtk4
 Requires: libadwaita

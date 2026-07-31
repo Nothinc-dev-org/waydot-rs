@@ -20,10 +20,12 @@ jobs:
             git \
             rust \
             cargo \
+            pkgconf-pkg-config \
             gtk4-devel \
             libadwaita-devel \
-            wayland-devel \
+            dbus-devel \
             openssl-devel \
+            libxkbcommon-devel \
             rpm-build \
             rpmdevtools
 

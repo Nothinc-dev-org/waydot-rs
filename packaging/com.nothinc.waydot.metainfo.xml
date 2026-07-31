@@ -10,7 +10,9 @@
     <p>Se ejecuta en segundo plano y aparece en la bandeja del sistema. Construido con Rust, GTK4 y Libadwaita.</p>
   </description>
   <launchable type="desktop-id">com.nothinc.waydot.desktop</launchable>
-  <developer_name>Nothinc</developer_name>
+  <developer id="dev.nothinc">
+    <name>Nothinc</name>
+  </developer>
   <url type="homepage">https://github.com/Nothinc-dev-org/waydot-rs</url>
   <categories>
     <category>Utility</category>
