@@ -4,7 +4,20 @@ Panel de entrada expresiva para Linux: emojis, kaomojis, simbolos especiales e h
 
 Construido con Rust, GTK4 y Libadwaita. Se ejecuta en segundo plano y aparece en la bandeja del sistema.
 
-## Dependencias
+[![Licencia: GPL v3](https://img.shields.io/badge/Licencia-GPLv3-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/Nothinc-dev-org/waydot-rs)](https://github.com/Nothinc-dev-org/waydot-rs/releases)
+
+## Instalacion (RPM)
+
+La version estable se distribuye como RPM para Fedora en las [releases de GitHub](https://github.com/Nothinc-dev-org/waydot-rs/releases). Descarga el archivo `.rpm` y ejecuta:
+
+```bash
+sudo dnf install ./waydot-0.1.0-1.fc44.x86_64.rpm
+```
+
+El paquete instala el binario, la entrada de aplicacion, el icono y la metadata AppStream, y resuelve automaticamente las dependencias de GTK4 y Libadwaita. Al terminar, Waydot aparece en el menu de aplicaciones y se puede lanzar desde ahi o con el comando `waydot`.
+
+## Dependencias (desarrollo)
 
 ### Fedora
 
@@ -120,4 +133,4 @@ src/
 
 ## Licencia
 
-GPL-3.0
+Waydot se distribuye bajo la **GNU General Public License v3.0** (`GPL-3.0-only`). Consulta el archivo [LICENSE](LICENSE) para los terminos completos.

@@ -1,0 +1,72 @@
+name: Release RPM
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-rpm:
+    name: Build RPM
+    runs-on: ubuntu-latest
+    container: fedora:44
+    steps:
+      - name: Install build tooling
+        run: |
+          dnf install -y \
+            git \
+            rust \
+            cargo \
+            gtk4-devel \
+            libadwaita-devel \
+            wayland-devel \
+            rpm-build \
+            rpmdevtools
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and package RPM
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$PWD"
+          VERSION=$(grep -m1 '^version' Cargo.toml | cut -d'"' -f2)
+          cargo test --release
+          cargo build --release
+          rpmdev-setuptree
+          git archive --format=tar.gz --prefix="waydot-${VERSION}/" \
+            -o "$HOME/rpmbuild/SOURCES/waydot-${VERSION}.tar.gz" HEAD
+          cp packaging/waydot.spec "$HOME/rpmbuild/SPECS/"
+          rpmbuild -bb --define "version ${VERSION}" "$HOME/rpmbuild/SPECS/waydot.spec"
+          mkdir -p dist
+          find "$HOME/rpmbuild/RPMS" -name 'waydot-*.rpm' \
+            ! -name '*debuginfo*' ! -name '*debugsource*' -exec cp {} dist/ \;
+          ls -l dist/
+
+      - name: Upload RPM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: waydot-rpm
+          path: dist/*.rpm
+          if-no-files-found: error
+
+  release:
+    name: Publish GitHub release
+    needs: build-rpm
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Download RPM
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/**/*.rpm

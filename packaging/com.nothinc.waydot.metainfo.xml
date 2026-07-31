@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>com.nothinc.waydot</id>
+  <name>Waydot</name>
+  <summary>Panel de emojis, kaomojis, simbolos y portapapeles</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-only</project_license>
+  <description>
+    <p>Panel de entrada expresiva para escritorios Linux inspirado en el panel Win+. de Windows 11: emojis, kaomojis, simbolos especiales e historial del portapapeles.</p>
+    <p>Se ejecuta en segundo plano y aparece en la bandeja del sistema. Construido con Rust, GTK4 y Libadwaita.</p>
+  </description>
+  <launchable type="desktop-id">com.nothinc.waydot.desktop</launchable>
+  <developer_name>Nothinc</developer_name>
+  <url type="homepage">https://github.com/Nothinc-dev-org/waydot-rs</url>
+  <categories>
+    <category>Utility</category>
+  </categories>
+  <releases>
+    <release version="0.1.0" date="2026-07-31">
+      <description>
+        <p>Primera version empaquetada como RPM.</p>
+      </description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1" />
+</component>

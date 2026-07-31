@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Waydot
+Comment=Panel de emojis, simbolos y portapapeles
+Exec=waydot
+Icon=com.nothinc.waydot
+Terminal=false
+Categories=Utility;
+StartupNotify=true

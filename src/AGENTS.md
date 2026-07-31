@@ -16,7 +16,7 @@ Configura `adw::Application`, el ciclo de `startup`/`activate`, el `application_
 Carga configuracion persistente local desde `dirs::data_dir()/waydot/config.json`. Actualmente define el atajo local de toggle, con `<Control><Shift>v` como default.
 
 ### `system.rs`
-Bootstrap de integracion de escritorio. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. No debe crecer hacia instaladores completos; cuando exista empaquetado, mover esa responsabilidad al paquete.
+Bootstrap de integracion de escritorio para ejecuciones desde fuente. Omite la integracion de usuario cuando el paquete RPM provee la entrada `.desktop` en `/usr/share/applications/`. La integracion formal vive en `packaging/` y este modulo no debe crecer hacia instaladores completos.
 
 ### `ui/`
 Componentes GTK4/Libadwaita. Deben enfocarse en presentacion, composicion de widgets y delegacion de eventos. No colocar aqui persistencia, carga de datasets, seleccion de backends de inyeccion ni reglas de negocio del historial.

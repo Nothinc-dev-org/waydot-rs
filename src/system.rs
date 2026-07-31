@@ -7,6 +7,7 @@ use crate::app::APPLICATION_ID;
 
 const DESKTOP_FILE: &str = "com.nothinc.waydot.desktop";
 const ICON_FILE: &str = "com.nothinc.waydot.svg";
+const PACKAGED_DESKTOP_FILE: &str = "/usr/share/applications/com.nothinc.waydot.desktop";
 const APP_NAME: &str = "Waydot";
 const APP_DESCRIPTION: &str = "Panel de emojis, simbolos y portapapeles";
 const ICON_SVG: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
@@ -19,6 +20,9 @@ const ICON_SVG: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" width="128" h
 "##;
 
 pub fn ensure_user_desktop_integration() -> io::Result<()> {
+    if Path::new(PACKAGED_DESKTOP_FILE).exists() {
+        return Ok(());
+    }
     write_icon()?;
     write_desktop_file()
 }

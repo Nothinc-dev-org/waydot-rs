@@ -67,6 +67,8 @@ src/
 data/               -- Archivos de datos estaticos (JSON)
 docs/               -- Documentacion tecnica
 docs/decisions/     -- Decisiones estructurales y de arquitectura
+packaging/          -- Recursos de empaquetado RPM (spec, .desktop, icono, metainfo)
+.github/            -- Workflows de GitHub Actions (release RPM)
 .ai/                -- Configuracion y roles de IA
 ```
 
@@ -91,7 +93,7 @@ Icono de bandeja del sistema usando `ksni` (protocolo StatusNotifierItem). Ejecu
 Configuracion persistente local. Actualmente carga `config.json` bajo el directorio de datos del usuario (`dirs::data_dir()/waydot/`) y define dos atajos locales: `clipboard_shortcut` (`<Control><Super>v` por defecto) y `emoji_shortcut` (`<Control><Shift>period` por defecto).
 
 ### `src/system.rs`
-Bootstrap de integracion de escritorio. Asegura una entrada `.desktop` y un icono de usuario para `com.nothinc.waydot` mientras no exista empaquetado formal. Cuando se agregue empaquetado, esta responsabilidad debe migrar a recursos instalados por el paquete.
+Bootstrap de integracion de escritorio para ejecuciones desde fuente. Omite la integracion de usuario cuando el paquete RPM instalado ya provee la entrada `.desktop` en `/usr/share/applications/`. Con empaquetado formal, esa responsabilidad vive en `packaging/`.
 
 ### `src/input/`
 Publicacion del texto/emoji seleccionado al portapapeles activo. El directorio conserva una implementacion modular de insercion nativa para Wayland y X11, pero no forma parte del runtime actual.
